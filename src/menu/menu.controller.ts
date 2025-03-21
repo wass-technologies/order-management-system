@@ -12,6 +12,7 @@ import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
 @Controller('menu')
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}
+  
 // crete menu item
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('RESTAURANT')  

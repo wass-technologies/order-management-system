@@ -10,10 +10,11 @@ import { AccountService } from './account.service';
 import { Account } from './entities/account.entity';
 import { RatingFeedbackModule } from 'src/rating-feedback/rating-feedback.module';
 import { SearchHistoryModule } from 'src/search-history/search-history.module';
+import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Account]),
+    TypeOrmModule.forFeature([Account,UserDetail]),
     AuthModule,
     MenusModule,
     PermissionsModule,

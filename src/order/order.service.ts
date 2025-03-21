@@ -91,6 +91,21 @@ export class OrderService {
     };
 }
 
+// view order status for customer
+async getOrderStatus(orderId: number, userId: string) {
+  const order = await this.orderRepo.findOne({
+      where: { id: orderId, user: { id: userId } },
+      relations: ['user', 'company'],
+  });
+
+  if (!order) {
+      throw new NotFoundException('Order not found');
+  }
+
+  return { orderId: order.id, status: order.status };
+}
+
+
 // update order by copany
 async updateOrderStatus(orderId: number, newStatus: OrderStatus, accountId: string) {
   const order = await this.orderRepo.findOne({
@@ -120,19 +135,6 @@ async updateOrderStatus(orderId: number, newStatus: OrderStatus, accountId: stri
            
       }
   };
-}
-// view order status for customer
-async getOrderStatus(orderId: number, userId: string) {
-  const order = await this.orderRepo.findOne({
-      where: { id: orderId, user: { id: userId } },
-      relations: ['user', 'company'],
-  });
-
-  if (!order) {
-      throw new NotFoundException('Order not found');
-  }
-
-  return { orderId: order.id, status: order.status };
 }
 
 

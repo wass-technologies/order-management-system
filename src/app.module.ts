@@ -60,7 +60,6 @@ import { Cart } from './cart/entities/cart.entity';
       database: process.env.BL_DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}',Cart],
       synchronize:false,
-      
     }),
     CacheModule.register({
       isGlobal: true,

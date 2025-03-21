@@ -4,6 +4,7 @@ import { Account } from 'src/account/entities/account.entity';
 import { Brackets, Repository } from 'typeorm';
 import { PaginationSDto, UpdateUserDetailDto } from './dto/update-user-details';
 import { UserDetail } from './entities/user-detail.entity';
+import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
 
 
 @Injectable()
@@ -17,10 +18,10 @@ export class UserDetailsService {
 
   // Import DTO
 
-  async updateCompanyDetails(accountId: string, updateData: UpdateUserDetailDto) {
+  async updateusrDetails(accountId: string, updateData: UpdateUserDetailDto) {
     let userDetail = await this.repo.findOne({
       where: { account: { id: accountId } },
-      relations: ['account'], // Ensure relations are loaded
+      relations: ['account'], 
     });
   
     if (!userDetail) {
@@ -29,29 +30,40 @@ export class UserDetailsService {
         throw new NotFoundException('Account not found');
       }
   
-      userDetail = this.repo.create({ ...updateData, account }); // Associate with account
+      userDetail = this.repo.create({ ...updateData, account }); 
     } else {
-      Object.assign(userDetail, updateData); // Apply updates correctly
+      Object.assign(userDetail, updateData); 
     }
   
-    return this.repo.save(userDetail); // Save the updated entity
+    return this.repo.save(userDetail); 
   }
 
   // all company details by admin 
-async getAllUserDetails(page: number, limit: number) {
-  const [companies, total] = await this.repo.findAndCount({
-    skip: (page - 1) * limit,
-    take: limit,
-  });
-
-  return {
-    data: companies,
-    total,
-    page,
-    limit,
-  };
-}
-
+  async getAllUserDetails(paginationDto: CommonPaginationDto) {
+    const { limit, offset, keyword } = paginationDto;
+  
+    const queryBuilder = this.repo.createQueryBuilder('user');
+  
+    if (keyword) {
+      queryBuilder.where('user.name LIKE :keyword', { keyword: `%${keyword}%` });
+    }
+  
+    const [users, total] = await queryBuilder
+      .skip(offset)
+      .take(limit)
+      .getManyAndCount();
+  
+    return {
+      data: users,
+      totalRecords: total,
+      totalPages: Math.ceil(total / limit),
+      currentPage: Math.floor(offset / limit) + 1,
+      pageSize: limit,
+    };
+  }
+  
+  
+  
   
 
   async getProfile(id: string) {

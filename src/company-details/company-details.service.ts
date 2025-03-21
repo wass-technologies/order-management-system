@@ -43,14 +43,7 @@ export class CompanyDetailsService {
   }
 
   
-  async updateStatus(companyId: string, status: CompanyStatus) {
-    const company = await this.repo.findOne({ where: { id: companyId } });
-    if (!company) {
-      throw new NotFoundException('Company not found');
-    }
-    company.status = status;
-    return this.repo.save(company);
-  }
+  
 
   // Get all companies 
   async getAllCompanies(paginationDto: CommonPaginationDto) {
@@ -123,12 +116,14 @@ export class CompanyDetailsService {
 
     return {
       total: companyDetail.menus.length,
-      offset,
-      limit,
       data: companyDetail.menus,
+      totalPages: Math.ceil(companyDetail.menus.length / limit),
+      currentPage: Math.floor(offset / limit) + 1,
+      pageSize: limit,
+      
     };
   }
-  // update company status
+ // staust update
   async status(id: string, dto: StatusDto) {
     const result = await this.repo.findOne({ where: { accountId: id } });
     if (!result) {
@@ -228,6 +223,13 @@ export class CompanyDetailsService {
 //     });
 //     return this.repo.save(obj);
 //   }
-
+// async updateStatus(companyId: string, status: CompanyStatus) {
+  //   const company = await this.repo.findOne({ where: { id: companyId } });
+  //   if (!company) {
+  //     throw new NotFoundException('Company not found');
+  //   }
+  //   company.status = status;
+  //   return this.repo.save(company);
+  // }
  
 }

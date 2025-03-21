@@ -10,6 +10,7 @@ import {
   Query,
   Req,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -61,62 +62,78 @@ export class AccountController {
     return account;
   }
 
-
-  @Get('companyDetail/:accountId')
+  
+  // get company details by account id
+  @Get('detail/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.RESTAURANT)
-  getCompanyDetailByAccountId(@Param('accountId') accountId: string) {
-    return this.accountService.getCompanyDetailByAccountId(accountId);
+  @Roles(UserRole.RESTAURANT) 
+  async getAccountDetail(@Param('accountId') accountId: string) {
+    return this.accountService.detail(accountId);
+
+    
   }
 
-  @Get("compnay_details/")
-  @Get('vendor/profile')
+  @Get('userdetails/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.RESTAURANT)
-  profile(@CurrentUser() user: Account){
-    return this.accountService.profile(user.id);
+  @Roles(UserRole.CUSTOMER) 
+  async getUserDetails(@Param('accountId') accountId: string) {
+    const userDetails = await this.accountService.userdetails(accountId);
+    if (!userDetails) {
+      throw new NotFoundException('User profile not found');
+    }
+    return userDetails;
   }
+
+
+
+
+//   @Get('vendor')
+//   @UseGuards(AuthGuard('jwt'), RolesGuard)
+//   @Roles(UserRole.RESTAURANT)
+//   profile(@CurrentUser() user: Account){
+//     return this.accountService.profile(user.id);
+//   }
   
 
  
-  @Get('resataurantDetails/:accountId')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.ADMIN)
- // @CheckPermissions([PermissionAction.READ, 'account'])
-  vendorDetailByAdmin(@Param('accountId') accountId: string){
-    return this.accountService.detail(accountId);
-  }
+//   @Get('resataurantDetails/:accountId')
+//   @UseGuards(AuthGuard('jwt'), RolesGuard)
+//   @Roles(UserRole.ADMIN)
+//  // @CheckPermissions([PermissionAction.READ, 'account'])
+//   vendorDetailByAdmin(@Param('accountId') accountId: string){
+//     return this.accountService.details(accountId);
+//   }
 
-  @Get('vendorDetail/user/:accountId')
-  vendorDetailByUser(@Param('accountId') accountId: string){
-    return this.accountService.detailByUser(accountId);
-  }
+//   @Get('vendorDetail/user/:accountId')
+//   vendorDetailByUser(@Param('accountId') accountId: string){
+//     return this.accountService.detailByUser(accountId);
+//   }
 
-  @Get('vendors')
-  @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
-  @Roles(UserRole.ADMIN)
-  @CheckPermissions([PermissionAction.READ, 'account'])
-  findAll(@Query() query: PaginationDto) {
-    return this.accountService.findAll(query);
-  }
+//   @Get('vendors')
+//   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
+//   @Roles(UserRole.ADMIN)
+//   @CheckPermissions([PermissionAction.READ, 'account'])
+//   findAll(@Query() query: PaginationDto) {
+//     return this.accountService.findAll(query);
+//   }
   
-  @Get('resataurant/list')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.CUSTOMER)
-  findAllByUser(@Query() dto: BusinessPaginationDto, @CurrentUser() user: Account) {
-    if (dto.keyword && dto.keyword.length > 0) {
-      this.searchHistoryService.create({
-        keyword: dto.keyword,
-        accountId: user.id
-      });
-    }
-    return this.accountService.findAllByUser(dto);
-  }
+//   @Get('resataurant/list')
+//   @UseGuards(AuthGuard('jwt'), RolesGuard)
+//   @Roles(UserRole.CUSTOMER)
+//   findAllByUser(@Query() dto: BusinessPaginationDto, @CurrentUser() user: Account) {
+//     if (dto.keyword && dto.keyword.length > 0) {
+//       this.searchHistoryService.create({
+//         keyword: dto.keyword,
+//         accountId: user.id
+//       });
+//     }
+//     return this.accountService.findAllByUser(dto);
+//   }
 
-  @Get('user/profile')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.CUSTOMER)
-  userProfile(@CurrentUser() user: Account){
-    return this.accountService.userProfile(user.id);
-  }
+  // @Get('user/profile')
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Roles(UserRole.CUSTOMER)
+  // userProfile(@CurrentUser() user: Account){
+  //   return this.accountService.userProfile(user.id);
+  // }
 }

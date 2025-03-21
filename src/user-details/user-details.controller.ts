@@ -27,24 +27,24 @@ import { UserRole } from 'src/enum';
 import { PaginationSDto, UpdateUserDetailDto } from './dto/update-user-details';
 import { UserDetailsService } from './user-details.service';
 import{Request} from 'express';
-import { PaginationDto } from 'src/pagination.dto';
+
+import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
 
 
 @Controller('user-details')
 export class UserDetailsController {
   constructor(private readonly userDetailsService: UserDetailsService) {}
 // user details update
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  
  
     @Put('update')
-    async updateCompanyDetail(@Req() req: Request,  @Body() updateData: UpdateUserDetailDto) {
-   const user = req.user as { accountId: string };
-   
-  
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    async updateuserDetail(@CurrentUser() user: { accountId: string } , @Body() updateData: UpdateUserDetailDto) {
+  //  const user = req.user as { accountId: string };
       if (!user || !user.accountId) {
         throw new UnauthorizedException('Invalid token');
       }
-      return this.userDetailsService.updateCompanyDetails(user.accountId, updateData);
+      return this.userDetailsService.updateusrDetails(user.accountId, updateData);
     }
 
 // user details check by admin
@@ -52,11 +52,13 @@ export class UserDetailsController {
       @Roles('ADMIN') 
       @Get('all')
       async getAllUserDetails(
-        @Query() paginationDto: PaginationDto
+        @Query() paginationDto:CommonPaginationDto 
       ) {
-        const { page, limit } = paginationDto;
-        return this.userDetailsService.getAllUserDetails(page, limit);
+        
+        return this.userDetailsService.getAllUserDetails(paginationDto);
       }
+
+
 
   // @Get()
   // @UseGuards(AuthGuard('jwt'), RolesGuard)

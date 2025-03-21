@@ -7,7 +7,7 @@ import { Account } from './entities/account.entity';
 import { RatingFeedbackService } from 'src/rating-feedback/rating-feedback.service';
 import bcrypt from 'bcrypt';
 import { CreateAccountDto } from 'src/account/dto/account.dto';
-import{CompanyDetail} from 'src/company-details/entities/company-detail.entity';
+
 
 @Injectable()
 export class AccountService {
@@ -17,6 +17,8 @@ export class AccountService {
     private readonly ratingFeedbackService: RatingFeedbackService,
 
   ) {}
+
+
   async create(dto: CreateAccountDto, createdBy: string) {
     const user = await this.repo.findOne({
       where: { email: dto.email, roles: UserRole.STAFF },
@@ -44,30 +46,93 @@ export class AccountService {
   }
 
 
-  async getCompanyDetailByAccountId(accountId: string) {
-    console.log('Fetching company details for account ID:', accountId);
-
-    const accountWithCompany = await this.repo
-        .createQueryBuilder('account')
-        .leftJoinAndSelect('account.companyDetail', 'companyDetail')
-        .where('account.id = :accountId', { accountId })
-        .getOne();
-
-    console.log('Raw Query Result:', accountWithCompany);
-
-    if (!accountWithCompany) {
-        console.log('❌ Account not found in the database.');
-        throw new NotFoundException('Account not found');
-    }
-
-    if (!accountWithCompany.companyDetail) {
-        console.log('❌ Company details not found.');
-        throw new NotFoundException('Company details not found');
-    }
-
-    return accountWithCompany.companyDetail;
+  
+async detail(id: string) {
+  const result = await this.repo
+    .createQueryBuilder('account')
+    .leftJoinAndSelect('account.companyDetail', 'companyDetail')
+    .where('account.id = :id', { id }) 
+    .andWhere('companyDetail.status IS NULL OR companyDetail.status = :status', { 
+      status: CompanyStatus.APPROVED 
+    }) 
+    .select([
+      'account.id',
+      'account.roles',
+      'account.status',
+      'companyDetail.id',
+      'companyDetail.name',
+      'companyDetail.address1',
+      'companyDetail.address2',
+      'companyDetail.state',
+      'companyDetail.city',
+      'companyDetail.fbLink',
+      'companyDetail.wpLink',
+      'companyDetail.instaLink',
+      'companyDetail.status',
+    ])
+    .getOne(); 
+  if (!result) {
+    throw new NotFoundException('Account or company details not found');
+  }
+  return result;
 }
 
+async userdetails(id: string) {
+  const result = await this.repo
+    .createQueryBuilder('account')
+    .leftJoinAndSelect('account.userDetail', 'userDetail') 
+    .select([
+      'account.id',
+      'account.roles',
+      'account.status',
+      'userDetail.id',
+      'userDetail.name',
+      'userDetail.city',
+      'userDetail.interest',
+      'userDetail.wpNo',
+      'userDetail.profile',
+    ])
+    .where('account.id = :id', { id }) 
+    .getOne();
+  if (!result || !result.userDetail.length) {
+    throw new NotFoundException('Profile Not Found!');
+  }
+  return result;
+}
+
+
+
+
+
+
+
+
+// async userdetails(id: string) {
+//   const result = await this.repo
+//     .createQueryBuilder('account')
+//     .leftJoinAndSelect('account.userDetail', 'userDetail')
+//     .select([
+//       'account.id',
+//       'account.email',
+//       'account.roles',
+//       'account.status',
+     
+
+//       'userDetail.id',
+//       'userDetail.name',
+//       'userDetail.email',
+//       'userDetail.city',
+//       'userDetail.interest',
+//       'userDetail.wpNo',
+      
+//     ])
+//     .where('account.id = :id', { id: id })
+//     .getOne();
+//   if (!result) {
+//     throw new NotFoundException('Profile Not Found!');
+//   }
+//   return result;
+// }
 
 
   async profile(id: string) {
@@ -162,7 +227,11 @@ export class AccountService {
     };
   }
 
-  async detail(id: string) {
+
+
+
+
+  async details(id: string) {
     const result = await this.repo
       .createQueryBuilder('account')
       .leftJoinAndSelect('account.companyDetail', 'companyDetail')
@@ -636,30 +705,30 @@ export class AccountService {
     return { result: filteredResults, total: filteredResults.length };
   }
 
-  async userProfile(id: string) {
-    const result = await this.repo
-      .createQueryBuilder('account')
-      .leftJoinAndSelect('account.userDetail', 'userDetail')
-      .select([
-        'account.id',
-        'account.phoneNumber',
-        'account.roles',
-        'account.status',
-        'account.createdAt',
+  // async userProfile(id: string) {
+  //   const result = await this.repo
+  //     .createQueryBuilder('account')
+  //     .leftJoinAndSelect('account.userDetail', 'userDetail')
+  //     .select([
+  //       'account.id',
+  //       'account.phoneNumber',
+  //       'account.roles',
+  //       'account.status',
+  //       'account.createdAt',
 
-        'userDetail.id',
-        'userDetail.name',
-        'userDetail.email',
-        'userDetail.city',
-        'userDetail.interest',
-        'userDetail.wpNo',
-        'userDetail.profile',
-      ])
-      .where('account.id = :id', { id: id })
-      .getOne();
-    if (!result) {
-      throw new NotFoundException('Profile Not Found!');
-    }
-    return result;
-  }
+  //       'userDetail.id',
+  //       'userDetail.name',
+  //       'userDetail.email',
+  //       'userDetail.city',
+  //       'userDetail.interest',
+  //       'userDetail.wpNo',
+  //       'userDetail.profile',
+  //     ])
+  //     .where('account.id = :id', { id: id })
+  //     .getOne();
+  //   if (!result) {
+  //     throw new NotFoundException('Profile Not Found!');
+  //   }
+  //   return result;
+  // }
 }

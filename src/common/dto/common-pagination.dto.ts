@@ -11,19 +11,19 @@ import {
 } from 'class-validator';
 
 export class CommonPaginationDto {
-  @IsOptional() // ✅ Make it optional
+  @IsOptional() 
   @Type(() => Number)
   @IsNumber()
   @Min(0)
   @Max(100)
   limit: number;
-  @IsOptional() // ✅ Make it optional
+  @IsOptional() 
   @Type(() => Number)
   @IsNumber()
   @Min(0)
   offset: number;
 
-  @IsOptional() // ✅ Make it optional
+  @IsOptional() 
   @IsString()
   @MinLength(0)
   @MaxLength(100)

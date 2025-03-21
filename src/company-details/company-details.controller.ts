@@ -71,7 +71,7 @@ export class CompanyDetailsController {
     return this.companyDetailsService.getMenuByCompanyIdforAdmin(companyId, paginationDto);
   }
 
-  // Update company status
+ 
   @Put(':id')
   @ApiOperation({ summary: 'For Admin' })
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
@@ -80,6 +80,7 @@ export class CompanyDetailsController {
   status(@Param('id') id: string, @Body() dto: StatusDto) {
     return this.companyDetailsService.status(id, dto);
   }
+  
 
   // @Get('profiles')
   // async getApprovedCompanies(@Query() paginationDto: CommonPaginationDto) {

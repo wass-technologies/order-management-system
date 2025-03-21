@@ -39,6 +39,19 @@ async getCompanytOrders(@CurrentUser() user: { accountId: string }, @Query() pag
     return this.orderService.getCompanytOrders(user.accountId, paginationDto);
 }
 
+
+// check the status of order
+@Get(':id/status')
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles(UserRole.CUSTOMER) 
+async getOrderStatus(@Param('id') orderId: number,@CurrentUser() user: { accountId: string }) {
+  if (!user.accountId) {
+    throw new UnauthorizedException('User not authenticated');
+  }
+  const userId = user.accountId; 
+  return this.orderService.getOrderStatus(orderId, userId);
+}
+
 //  update order status
 @Patch(':id/status')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -52,17 +65,6 @@ async updateOrderStatus(
     return this.orderService.updateOrderStatus(orderId, newStatus,accountId );
 }
 
-// check the status of order
-@Get(':id/status')
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles(UserRole.CUSTOMER) 
-async getOrderStatus(@Param('id') orderId: number,@CurrentUser() user: { accountId: string }) {
-  if (!user.accountId) {
-    throw new UnauthorizedException('User not authenticated');
-  }
-  const userId = user.accountId; 
-  return this.orderService.getOrderStatus(orderId, userId);
-}
 
  
 }
