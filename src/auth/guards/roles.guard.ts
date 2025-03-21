@@ -29,6 +29,7 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('User does not have required permissions');
     }
 
+
     return true;
   }
 }

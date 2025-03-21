@@ -7,16 +7,19 @@ import { Account } from './entities/account.entity';
 import { RatingFeedbackService } from 'src/rating-feedback/rating-feedback.service';
 import bcrypt from 'bcrypt';
 import { CreateAccountDto } from 'src/account/dto/account.dto';
+import{CompanyDetail} from 'src/company-details/entities/company-detail.entity';
+
 @Injectable()
 export class AccountService {
   constructor(
-    @InjectRepository(Account) private readonly repo: Repository<Account>,
+     @InjectRepository(Account) private readonly repo: Repository<Account>,
+    // @InjectRepository(CompanyDetail) private readonly companyDetailRepo: Repository<CompanyDetail>,
     private readonly ratingFeedbackService: RatingFeedbackService,
 
   ) {}
   async create(dto: CreateAccountDto, createdBy: string) {
     const user = await this.repo.findOne({
-      where: { email: dto.loginId, roles: UserRole.STAFF },
+      where: { email: dto.email, roles: UserRole.STAFF },
     });
     if (user) {
       throw new ConflictException('Login id already exists!');
@@ -24,7 +27,7 @@ export class AccountService {
 
     const encryptedPassword = await bcrypt.hash(dto.password, 13);
     const obj = Object.assign({
-      email: dto.loginId,
+      email: dto.email,
       password: encryptedPassword,
       createdBy,
       roles: UserRole.STAFF,
@@ -39,6 +42,34 @@ export class AccountService {
     await this.repo.save(object);
     return payload;
   }
+
+
+  async getCompanyDetailByAccountId(accountId: string) {
+    console.log('Fetching company details for account ID:', accountId);
+
+    const accountWithCompany = await this.repo
+        .createQueryBuilder('account')
+        .leftJoinAndSelect('account.companyDetail', 'companyDetail')
+        .where('account.id = :accountId', { accountId })
+        .getOne();
+
+    console.log('Raw Query Result:', accountWithCompany);
+
+    if (!accountWithCompany) {
+        console.log('❌ Account not found in the database.');
+        throw new NotFoundException('Account not found');
+    }
+
+    if (!accountWithCompany.companyDetail) {
+        console.log('❌ Company details not found.');
+        throw new NotFoundException('Company details not found');
+    }
+
+    return accountWithCompany.companyDetail;
+}
+
+
+
   async profile(id: string) {
     const result = await this.repo
       .createQueryBuilder('account')

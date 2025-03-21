@@ -30,7 +30,6 @@ export class OrderService {
       throw new NotFoundException('User not found');
 
     }
-  
     const cartItems = await this.cartRepo.find({ 
       where: { user: { id: userId } },  
       relations: ['menu', 'company', ]  
@@ -55,10 +54,7 @@ export class OrderService {
     });
     
     await this.orderRepo.save(order);
-
     await this.cartRepo.delete({ user: { id: userId } });
-
-
     return order;
   }
 
@@ -74,15 +70,12 @@ export class OrderService {
 
     if (!company) {
       throw new NotFoundException('No restaurant found for this owner.');
-    }
-
-    
+    }    
     const whereCondition: any = { company: { id: company.id } };
     if (keyword) {
         whereCondition['name'] = { $like: `%${keyword}%` }; 
     }
 
-   
     const orders = await this.orderRepo.find({
       where: whereCondition,
       relations: ['company'],
@@ -90,7 +83,6 @@ export class OrderService {
       skip: offset, 
     });
 
-    
     const totalOrders = await this.orderRepo.count({ where: whereCondition });
 
     return {

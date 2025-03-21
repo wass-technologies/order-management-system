@@ -30,7 +30,6 @@ export class CompanyDetailsService {
 
   async updateCompanyDetails(accountId: string, updateData: Partial<CompanyDetail>) {
     let companyDetails = await this.repo.findOne({ where: { account: { id: accountId } } });
-
     if (!companyDetails) {
       const account = await this.accountrepo.findOne({ where: { id: accountId } });
       if (!account) {
@@ -40,17 +39,15 @@ export class CompanyDetailsService {
     } else {
       Object.assign(companyDetails, updateData);
     }
-
     return this.repo.save(companyDetails);
   }
 
+  
   async updateStatus(companyId: string, status: CompanyStatus) {
     const company = await this.repo.findOne({ where: { id: companyId } });
-
     if (!company) {
       throw new NotFoundException('Company not found');
     }
-
     company.status = status;
     return this.repo.save(company);
   }

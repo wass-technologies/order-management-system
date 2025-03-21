@@ -54,28 +54,23 @@ export class MenuService {
   async getMenuByCompanyId(companyId: string, paginationDto: CommonPaginationDto) {
     const { limit = 10, offset = 0, keyword } = paginationDto;
 
-    // Check if the company exists
     const company = await this.repo.findOne({ where: { id: companyId } });
     if (!company) {
       throw new NotFoundException(`Company with ID ${companyId} not found`);
     }
 
-    // Query Builder for pagination and filtering
     const queryBuilder = this.menuRepo
       .createQueryBuilder('menu')
       .where('menu.companyId = :companyId', { companyId });
 
-    // Apply search filter if keyword is provided
     if (keyword) {
       queryBuilder.andWhere('LOWER(menu.item_name) LIKE LOWER(:keyword)', {
         keyword: `%${keyword}%`,
       });
     }
-  
-    // Get total count before pagination
+
     const total = await queryBuilder.getCount();
 
-    // Apply pagination
     const menuItems = await queryBuilder
       .skip(offset)
       .take(limit)

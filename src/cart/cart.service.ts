@@ -19,8 +19,6 @@ export class CartService {
 
   async addItemToCart(userId: string, createCartDto: CreateCartDto) {
     const { menuItemId, quantity } = createCartDto;
-
-    
     const menuItem = await this.menuRepo
       .createQueryBuilder('menu')
       .leftJoinAndSelect('menu.company', 'company')
@@ -41,8 +39,6 @@ export class CartService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
-   
     let cartItem = await this.cartRepo
       .createQueryBuilder('cart')
       .leftJoinAndSelect('cart.menu', 'menu')
@@ -51,9 +47,7 @@ export class CartService {
       .where('cart.user = :userId', { userId })
       .andWhere('cart.menu = :menuItemId', { menuItemId })
       .getOne();
-
     if (cartItem) {
-      
       cartItem.quantity += quantity;
       cartItem.totalPrice = menuItem.price ? menuItem.price * cartItem.quantity : 0;
 
@@ -110,10 +104,7 @@ async getCartItems(userId: string, paginationDto: CommonPaginationDto) {
       });
   }
 
-
   const total = await query.getCount();
-
-  
   const cartItems = await query
       .orderBy('cart.id', 'DESC')
       .skip(offset)
@@ -131,7 +122,6 @@ async getCartItems(userId: string, paginationDto: CommonPaginationDto) {
 
 
 async updateCartItem(userId: string, cartId: number, updateCartDto: UpdateCartDto): Promise<Cart> {
-
   let cartItem = await this.cartRepo.findOne({
     where: { id: cartId, user: { id: userId } },
     relations: ['menu', 'user', 'company'],
@@ -151,7 +141,7 @@ return await this.cartRepo.save(cartItem);
 
 
 async removeCartItem(userId: string, cartId: number): Promise<{ message: string }> {
-
+  
   const cartItem = await this.cartRepo.findOne({ 
     where: { id: cartId, user: { id: userId } },
   });

@@ -62,6 +62,14 @@ export class AccountController {
   }
 
 
+  @Get('companyDetail/:accountId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.RESTAURANT)
+  getCompanyDetailByAccountId(@Param('accountId') accountId: string) {
+    return this.accountService.getCompanyDetailByAccountId(accountId);
+  }
+
+  @Get("compnay_details/")
   @Get('vendor/profile')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.RESTAURANT)
@@ -69,11 +77,12 @@ export class AccountController {
     return this.accountService.profile(user.id);
   }
   
+
  
   @Get('resataurantDetails/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
-  @CheckPermissions([PermissionAction.READ, 'account'])
+ // @CheckPermissions([PermissionAction.READ, 'account'])
   vendorDetailByAdmin(@Param('accountId') accountId: string){
     return this.accountService.detail(accountId);
   }

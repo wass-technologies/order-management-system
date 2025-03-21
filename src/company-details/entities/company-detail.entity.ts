@@ -78,7 +78,7 @@ export class CompanyDetail {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Account, (account) => account.id, { onDelete: 'CASCADE' }) 
+  @ManyToOne(() => Account, (account) => account.companyDetail, { onDelete: 'CASCADE' }) 
   @JoinColumn({ name: 'accountId' }) //  Foreign Key
   account: Account;
 

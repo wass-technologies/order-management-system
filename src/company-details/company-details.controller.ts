@@ -43,7 +43,7 @@ export class CompanyDetailsController {
 
   @Put('update')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.RESTAURANT)
   async updateCompanyDetail(
     @CurrentUser() user: { accountId: string },
     @Body() updateData

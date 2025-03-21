@@ -30,6 +30,7 @@ export class MenuController {
   ) {
     return this.menuService.getMenuByCompanyId(companyId, paginationDto);
   }
+  
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('RESTAURANT') 
