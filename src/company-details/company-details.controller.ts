@@ -55,8 +55,9 @@ export class CompanyDetailsController {
   }
 
   @Get('all')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
+  @Roles(UserRole.STAFF)
+  @CheckPermissions([PermissionAction.UPDATE, 'company_detail'])
   async getAllCompanies(@Query() paginationDto: CommonPaginationDto) {
     return this.companyDetailsService.getAllCompanies(paginationDto);
   }
@@ -80,7 +81,7 @@ export class CompanyDetailsController {
   status(@Param('id') id: string, @Body() dto: StatusDto) {
     return this.companyDetailsService.status(id, dto);
   }
-  
+
 
   // @Get('profiles')
   // async getApprovedCompanies(@Query() paginationDto: CommonPaginationDto) {

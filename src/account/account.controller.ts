@@ -43,7 +43,7 @@ export class AccountController {
   @Post('add-staff')
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(UserRole.ADMIN)
-  @CheckPermissions([PermissionAction.CREATE, 'account'])
+  //@CheckPermissions([PermissionAction.CREATE, 'account'])
   async create(@Body() dto: CreateAccountDto, @CurrentUser() user: Account) {
     const account = await this.accountService.create(dto, user.id);
     const menus = await this.menuService.findAll();
