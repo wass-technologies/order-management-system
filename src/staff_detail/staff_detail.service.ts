@@ -22,4 +22,10 @@ export class StaffDetailService {
     Object.assign(staff, updateDto);
     return this.repo.save(staff);
   }
+
+
+  async deleteStaff(id: string): Promise<boolean> {
+    const result = await this.repo.delete(id);
+    return result.affected > 0;
+  }
 }

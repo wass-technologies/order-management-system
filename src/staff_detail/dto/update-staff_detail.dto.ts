@@ -4,15 +4,15 @@ import { CreateStaffDetailDto } from './create-staff_detail.dto';
 import { IsOptional, IsString, IsUUID, IsEmail, IsDate, IsNumber } from 'class-validator';
 
 export class UpdateStaffDetailDto {
-  @IsNumber()
-  id: number; 
-  @IsOptional()
-  @IsString()
-  name?: string;
+//   @IsNumber()
+//   id: number; 
+//   @IsOptional()
+//   @IsString()
+//   name?: string;
 
-  @IsOptional()
-  @IsEmail()
-  email?: string;
+//   @IsOptional()
+//   @IsEmail()
+//   email?: string;
 
   @IsOptional()
   @IsDate()
