@@ -36,6 +36,7 @@ export class AccountController {
     private readonly menuService: MenusService,
     private readonly permissionService: PermissionsService,
     private readonly userPermService: UserPermissionsService,
+    
   ) { }
 
 
@@ -43,7 +44,7 @@ export class AccountController {
   @Post('add-staff')
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(UserRole.ADMIN)
-  //@CheckPermissions([PermissionAction.CREATE, 'account'])
+  @CheckPermissions([PermissionAction.CREATE, 'account'])
   async create(@Body() dto: CreateAccountDto, @CurrentUser() user: Account) {
     const account = await this.accountService.create(dto, user.id);
     const menus = await this.menuService.findAll();
@@ -64,7 +65,7 @@ export class AccountController {
 
   
   // get company details by account id
-  @Get('detail/:accountId')
+  @Get('compnay_detail/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.RESTAURANT) 
   async getAccountDetail(@Param('accountId') accountId: string) {

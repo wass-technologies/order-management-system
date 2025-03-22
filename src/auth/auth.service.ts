@@ -56,12 +56,11 @@ export class AuthService {
         throw new ConflictException('User with this email already exists');
     }
 
-  
-    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+  const hashedPassword = await bcrypt.hash(registerDto.password, 10);
     const account = this.repo.create({
         email: registerDto.email,
         password: hashedPassword,
-        roles: registerDto.roles || UserRole.CUSTOMER,  // If role is not provided, default to 'User'
+        roles: registerDto.roles || UserRole.CUSTOMER,  
     });
 
     return await this.repo.save(account);

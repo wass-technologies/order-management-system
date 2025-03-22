@@ -43,6 +43,7 @@ import { OrderModule } from './order/order.module';
 import { CartModule } from './cart/cart.module';
 import { Menu } from './menu/entities/menu.entity';
 import { Cart } from './cart/entities/cart.entity';
+import { StaffDetailModule } from './staff_detail/staff_detail.module';
 @Module({
   imports: [
  
@@ -101,6 +102,7 @@ import { Cart } from './cart/entities/cart.entity';
     //BannerCategoryModule,
     MenuModule,
     CartModule,
+    StaffDetailModule,
    
   ],
   controllers: [AppController],

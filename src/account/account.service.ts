@@ -7,12 +7,14 @@ import { Account } from './entities/account.entity';
 import { RatingFeedbackService } from 'src/rating-feedback/rating-feedback.service';
 import bcrypt from 'bcrypt';
 import { CreateAccountDto } from 'src/account/dto/account.dto';
+import { StaffDetail } from 'src/staff_detail/entities/staff_detail.entity';
 
 
 @Injectable()
 export class AccountService {
   constructor(
      @InjectRepository(Account) private readonly repo: Repository<Account>,
+     @InjectRepository(StaffDetail) private readonly staffRepo: Repository<StaffDetail>,
     // @InjectRepository(CompanyDetail) private readonly companyDetailRepo: Repository<CompanyDetail>,
     private readonly ratingFeedbackService: RatingFeedbackService,
 
@@ -41,7 +43,7 @@ export class AccountService {
       dob: dto.dob,
       accountId: payload.id,
     });
-    await this.repo.save(object);
+    await this.staffRepo.save(object);
     return payload;
   }
 

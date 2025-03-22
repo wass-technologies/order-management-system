@@ -27,8 +27,10 @@ import { UserRole } from 'src/enum';
 import { PaginationSDto, UpdateUserDetailDto } from './dto/update-user-details';
 import { UserDetailsService } from './user-details.service';
 import{Request} from 'express';
-
 import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
+import { PermissionAction } from 'src/enum'; 
+import { CheckPermissions } from 'src/auth/decorators/permissions.decorator';
+import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
 
 
 @Controller('user-details')
@@ -39,6 +41,7 @@ export class UserDetailsController {
  
     @Put('update')
     @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(UserRole.RESTAURANT)
     async updateuserDetail(@CurrentUser() user: { accountId: string } , @Body() updateData: UpdateUserDetailDto) {
   //  const user = req.user as { accountId: string };
       if (!user || !user.accountId) {
@@ -47,10 +50,12 @@ export class UserDetailsController {
       return this.userDetailsService.updateusrDetails(user.accountId, updateData);
     }
 
-// user details check by admin
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-      @Roles('ADMIN') 
+
+ 
       @Get('all')
+        @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
+        @Roles(UserRole.STAFF, UserRole.ADMIN)
+        @CheckPermissions([PermissionAction.READ, 'user-details'])
       async getAllUserDetails(
         @Query() paginationDto:CommonPaginationDto 
       ) {

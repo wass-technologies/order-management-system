@@ -16,6 +16,8 @@ import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import { UserPermission } from 'src/user-permissions/entities/user-permission.entity';
 import{Cart} from 'src/cart/entities/cart.entity';
 import{Order} from 'src/order/entities/order.entity';
+import{StaffDetail} from 'src/staff_detail/entities/staff_detail.entity';
+
 
 import {
   Column,
@@ -69,6 +71,9 @@ export class Account {
 
   @OneToMany(() => CompanyDetail, (companyDetail) => companyDetail.account)
   companyDetail: CompanyDetail[];
+
+  @OneToMany(() => StaffDetail, (staffDetail) => staffDetail.account)
+  staffDetail: StaffDetail[];
 
   @OneToMany(() => Faq, (faq) => faq.account)
   faq: Faq[];

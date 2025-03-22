@@ -56,7 +56,7 @@ export class CompanyDetailsController {
 
   @Get('all')
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
-  @Roles(UserRole.STAFF)
+  @Roles(UserRole.STAFF, UserRole.ADMIN)
   @CheckPermissions([PermissionAction.UPDATE, 'company_detail'])
   async getAllCompanies(@Query() paginationDto: CommonPaginationDto) {
     return this.companyDetailsService.getAllCompanies(paginationDto);
@@ -67,8 +67,7 @@ export class CompanyDetailsController {
   @Roles(UserRole.ADMIN)
   async getMenuByCompanyIdforAdmin(
     @Param('companyId') companyId: string,
-    @Query() paginationDto: CommonPaginationDto
-  ) {
+    @Query() paginationDto: CommonPaginationDto) {
     return this.companyDetailsService.getMenuByCompanyIdforAdmin(companyId, paginationDto);
   }
 
@@ -76,8 +75,9 @@ export class CompanyDetailsController {
   @Put(':id')
   @ApiOperation({ summary: 'For Admin' })
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
-  @Roles(UserRole.ADMIN)
- // @CheckPermissions([PermissionAction.UPDATE, 'company_detail'])
+  @Roles(UserRole.STAFF, UserRole.ADMIN)
+  @CheckPermissions([PermissionAction.UPDATE, 'company_detail'])
+ @CheckPermissions([PermissionAction.UPDATE, 'company_detail'])
   status(@Param('id') id: string, @Body() dto: StatusDto) {
     return this.companyDetailsService.status(id, dto);
   }
