@@ -13,7 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
 import { Account } from 'src/account/entities/account.entity';
 import { CompanyDetail } from 'src/company-details/entities/company-detail.entity';
-import { LogType, LoginType, UserRole } from 'src/enum';
+import { CompanyStatus, LogType, LoginType, UserRole } from 'src/enum';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
 import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import { UserPermission } from 'src/user-permissions/entities/user-permission.entity';
@@ -33,6 +33,7 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     @InjectRepository(Account) private readonly repo: Repository<Account>,
+    
     @InjectRepository(LoginHistory)
     private readonly logRepo: Repository<LoginHistory>,
     @InjectRepository(UserPermission)
@@ -56,18 +57,40 @@ export class AuthService {
         throw new ConflictException('User with this email already exists');
     }
 
-  const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-    const account = this.repo.create({
+    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+    const payload = this.repo.create({
+        name: registerDto.name,
         email: registerDto.email,
         password: hashedPassword,
         roles: registerDto.roles || UserRole.CUSTOMER,  
     });
 
-    return await this.repo.save(account);
+    const savedAccount = await this.repo.save(payload);
+
+  
+    if (registerDto.roles === UserRole.RESTAURANT) {
+        const companyDetail = this.companyDetailRepo.create({
+            name: registerDto.name, 
+            email: registerDto.email, 
+            status: CompanyStatus.PENDING,
+            accountId: savedAccount.id,  
+        });
+        await this.companyDetailRepo.save(companyDetail);
+        
+    } else if (registerDto.roles === UserRole.CUSTOMER) {
+        const userDetail = this.userDetailRepo.create({
+            name: registerDto.name, 
+            email: registerDto.email, 
+            accountId: savedAccount.id,  
+        });
+        await this.userDetailRepo.save(userDetail);
+    }
+
+    return savedAccount;
 }
 
   
-  
+
   async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
     const { email, password } = loginDto;
   
@@ -76,13 +99,10 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-  
-   
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    
     const payload = { userId: user.id, email: user.email ,  accountId: user.id, roles: user.roles,  };
     console.log("JWT Payload:", payload);
     const accessToken = await this.jwtService.sign(payload);
@@ -91,14 +111,14 @@ export class AuthService {
   }
 
 
-  
-  async userLogin(loginId: string, roles: UserRole) {
-    let user = await this.repo.findOne({
-      where: { email: loginId, roles: roles,  },
-    });
+
+  // async userLogin(loginId: string, roles: UserRole) {
+  //   let user = await this.repo.findOne({
+  //     where: { email: loginId, roles: roles,  },
+  //   });
     
-      return { loginId };
-    }
+  //     return { loginId };
+  //   }
 
   // async createOrUpdate(dto: CreateDetailDto) {
   //   const result = await this.userDetailRepo.findOne({
@@ -204,4 +224,22 @@ export class AuthService {
     }
     return result;
   };
+
+  //   async register(registerDto: RegisterDto): Promise<Account> {
+//     const existingUser = await this.repo.findOne({ where: { email: registerDto.email } });
+//     if (existingUser) {
+//         throw new ConflictException('User with this email already exists');
+//     }
+
+//   const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+//     const account = this.repo.create({
+//       name: registerDto.name,
+//         email: registerDto.email,
+//         password: hashedPassword,
+//         roles: registerDto.roles || UserRole.CUSTOMER,  
+//     });
+
+//     return await this.repo.save(account);
+// }
+
 }

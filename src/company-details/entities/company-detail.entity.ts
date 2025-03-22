@@ -31,7 +31,7 @@ export class CompanyDetail {
   @Column({ type: 'varchar', length: 55, nullable: true })
   name: string;
 
-  @Column({ nullable: true })
+  @Column({type: 'varchar', length: 55, nullable: true })
   email: string;
   
   @Column({ type: 'varchar', length: 55, nullable: true })

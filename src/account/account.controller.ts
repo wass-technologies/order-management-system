@@ -75,18 +75,21 @@ export class AccountController {
   }
 
   @Get('userdetails/:accountId')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.CUSTOMER) 
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Roles(UserRole.CUSTOMER) 
   async getUserDetails(@Param('accountId') accountId: string) {
-    const userDetails = await this.accountService.userdetails(accountId);
-    if (!userDetails) {
-      throw new NotFoundException('User profile not found');
-    }
-    return userDetails;
+     return this.accountService.userdetails(accountId);
+    
   }
 
 
-
+  @Get('staffdetails/:accountId')
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Roles(UserRole.CUSTOMER) 
+  async getstaffDetails(@Param('accountId') accountId: string) {
+     return this.accountService.staffdetails(accountId);
+    
+  }
 
 //   @Get('vendor')
 //   @UseGuards(AuthGuard('jwt'), RolesGuard)

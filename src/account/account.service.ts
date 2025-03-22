@@ -8,6 +8,7 @@ import { RatingFeedbackService } from 'src/rating-feedback/rating-feedback.servi
 import bcrypt from 'bcrypt';
 import { CreateAccountDto } from 'src/account/dto/account.dto';
 import { StaffDetail } from 'src/staff_detail/entities/staff_detail.entity';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 
 @Injectable()
@@ -15,11 +16,9 @@ export class AccountService {
   constructor(
      @InjectRepository(Account) private readonly repo: Repository<Account>,
      @InjectRepository(StaffDetail) private readonly staffRepo: Repository<StaffDetail>,
-    // @InjectRepository(CompanyDetail) private readonly companyDetailRepo: Repository<CompanyDetail>,
     private readonly ratingFeedbackService: RatingFeedbackService,
 
   ) {}
-
 
   async create(dto: CreateAccountDto, createdBy: string) {
     const user = await this.repo.findOne({
@@ -50,6 +49,7 @@ export class AccountService {
 
   
 async detail(id: string) {
+ 
   const result = await this.repo
     .createQueryBuilder('account')
     .leftJoinAndSelect('account.companyDetail', 'companyDetail')
@@ -80,32 +80,79 @@ async detail(id: string) {
 }
 
 async userdetails(id: string) {
+  // const akah =this.repo.findOne({
+  //   where: { id },
+  //   relations: ['userDetail'],
+  // });
+  // console.log(akah);
+  // const result = await this.repo
+  //   .createQueryBuilder('account')
+  //   .leftJoinAndSelect('account.userDetail', 'userDetail') 
+  //   .select([
+  //     'account.id',
+  //     'account.roles',
+  //     'account.status',
+  //     'userDetail.id',
+  //     'userDetail.name',
+  //     'userDetail.city',
+  //     'userDetail.interest',
+  //     'userDetail.wpNo',
+  //     'userDetail.profile',
+  //   ])
+  //   .where('account.id = :id', { id }) 
+  //   .getOne();
+  // const result=await this.repo.findOne({
+  //   where: { id },
+  //   relations: ['userDetail'],
+  //   .select
+    
+  // });
+
+  // if (!result ) {
+  //   throw new NotFoundException('Profile Not Found!');
+  // }
+  // return result;
+  const result = await this.repo.findOne({
+    where: { id },
+    relations: ['userDetail'],
+    select: [
+      'id',
+      'roles',
+      'status',
+    ],
+  });
+
+
+  return result;
+}
+
+async staffdetails(id: string) {
   const result = await this.repo
     .createQueryBuilder('account')
-    .leftJoinAndSelect('account.userDetail', 'userDetail') 
+    .leftJoinAndSelect('account.staffDetail', 'staffDetail')
+    .where('account.id = :id', { id }) 
+    
     .select([
       'account.id',
       'account.roles',
       'account.status',
-      'userDetail.id',
-      'userDetail.name',
-      'userDetail.city',
-      'userDetail.interest',
-      'userDetail.wpNo',
-      'userDetail.profile',
+      'StaffDetail.id',
+      'StaffDetail.name',
+      'StaffDetail.address1',
+      // 'StaffDetail.address2',
+      // 'companyDetail.state',
+      // 'companyDetail.city',
+      // 'companyDetail.fbLink',
+      // 'companyDetail.wpLink',
+      // 'companyDetail.instaLink',
+      // 'companyDetail.status',
     ])
-    .where('account.id = :id', { id }) 
-    .getOne();
-  if (!result || !result.userDetail.length) {
-    throw new NotFoundException('Profile Not Found!');
+    .getOne(); 
+  if (!result) {
+    throw new NotFoundException('Account or company details not found');
   }
   return result;
 }
-
-
-
-
-
 
 
 
