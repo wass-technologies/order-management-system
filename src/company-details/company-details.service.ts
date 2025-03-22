@@ -28,19 +28,29 @@ export class CompanyDetailsService {
   ) {}
 
 
-  async updateCompanyDetails(accountId: string, updateData: Partial<CompanyDetail>) {
-    let companyDetails = await this.repo.findOne({ where: { account: { id: accountId } } });
-    if (!companyDetails) {
-      const account = await this.accountrepo.findOne({ where: { id: accountId } });
-      if (!account) {
-        throw new Error('Account not found');
+  async updatecompanyDetails(id: string, dto: CompanyDetailDto) {
+        const result = await this.repo.findOne({ where: { accountId: id } });
+        if (!result) {
+          throw new NotFoundException('Company not found!');
+        }
+        const obj = Object.assign(result, dto);
+        return this.repo.save(obj);
       }
-      companyDetails = this.repo.create({ ...updateData, account });
-    } else {
-      Object.assign(companyDetails, updateData);
-    }
-    return this.repo.save(companyDetails);
-  }
+    
+
+  // async updateCompanyDetails(accountId: string, updateData: Partial<CompanyDetail>) {
+  //   let companyDetails = await this.repo.findOne({ where: { account: { id: accountId } } });
+  //   if (!companyDetails) {
+  //     const account = await this.accountrepo.findOne({ where: { id: accountId } });
+  //     if (!account) {
+  //       throw new Error('Account not found');
+  //     }
+  //     companyDetails = this.repo.create({ ...updateData, account });
+  //   } else {
+  //     Object.assign(companyDetails, updateData);
+  //   }
+  //   return this.repo.save(companyDetails);
+  // }
 
   
   

@@ -25,8 +25,8 @@ export class CompanyDetail {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'int', nullable: true })
-  profileId: number;
+  // @Column({ type: 'int', nullable: true })
+  // profileId: number;
 
   @Column({ type: 'varchar', length: 55, nullable: true })
   name: string;
@@ -34,8 +34,8 @@ export class CompanyDetail {
   @Column({type: 'varchar', length: 55, nullable: true })
   email: string;
   
-  @Column({ type: 'varchar', length: 55, nullable: true })
-  businessName: string;
+  // @Column({ type: 'varchar', length: 55, nullable: true })
+  // businessName: string;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
   address1: string;
@@ -49,8 +49,8 @@ export class CompanyDetail {
   @Column({ type: 'varchar', length: 100, nullable: true })
   city: string;
 
-  @Column({ type: "text" })
-  area: string;
+  // @Column({ type: "text" })
+  // area: string;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
   pincode: string;

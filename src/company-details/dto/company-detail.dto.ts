@@ -17,17 +17,17 @@ import {  CompanyStatus } from 'src/enum';
 
 
 export class CompanyDetailDto {
-  @IsOptional()
-  @IsString()
-  @MinLength(0)
-  @MaxLength(50)
-  name: string;
+  // @IsOptional()
+  // @IsString()
+  // @MinLength(0)
+  // @MaxLength(50)
+  // name: string;
 
-  @IsOptional()
-  @IsEmail()
-  @MinLength(0)
-  @MaxLength(50)
-  email: string;
+  // @IsOptional()
+  // @IsEmail()
+  // @MinLength(0)
+  // @MaxLength(50)
+  // email: string;
 
   @IsOptional()
   @IsString()

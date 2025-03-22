@@ -24,7 +24,7 @@ export class UserPermissionsController {
       menuItem.userPermission.forEach((permItem) => {
         obj.push({
           id: permItem.id,
-          rootAccountId: permItem.accountId,
+          accountId: permItem.accountId,
           menuId: menuItem.id,
           permissionId: permItem.permission.id,
           status: permItem.status,

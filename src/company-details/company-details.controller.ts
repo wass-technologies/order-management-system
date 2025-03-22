@@ -33,7 +33,8 @@ import { Request } from 'express';
 import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
 import { CompanyStatus } from 'src/enum';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import{StatusDto} from './dto/company-detail.dto';
+import{CompanyDetailDto, StatusDto} from './dto/company-detail.dto';
+import { CompanyDetail } from './entities/company-detail.entity';
 
 
 @Controller('resataurant-details')
@@ -41,23 +42,32 @@ export class CompanyDetailsController {
   constructor(private readonly companyDetailsService: CompanyDetailsService) {}
 
 
-  @Put('update')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.RESTAURANT)
-  async updateCompanyDetail(
-    @CurrentUser() user: { accountId: string },
-    @Body() updateData
-  ) {
-    if (!user?.accountId) {
-      throw new UnauthorizedException('Invalid token');
+
+   @Put('update/:id')
+    async updatecompanyDetails(
+      @Param('id') id: string,
+      @Body() updateDto: CompanyDetailDto ): Promise<CompanyDetail> {
+      return this.companyDetailsService.updatecompanyDetails(id, updateDto);
     }
-    return this.companyDetailsService.updateCompanyDetails(user.accountId, updateData);
-  }
+  
+
+  // @Put('update')
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Roles(UserRole.RESTAURANT)
+  // async updateCompanyDetail(
+  //   @CurrentUser() user: { accountId: string },
+  //   @Body() updateData
+  // ) {
+  //   if (!user?.accountId) {
+  //     throw new UnauthorizedException('Invalid token');
+  //   }
+  //   return this.companyDetailsService.updateCompanyDetails(user.accountId, updateData);
+  // }
 
   @Get('all')
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(UserRole.STAFF, UserRole.ADMIN)
-  @CheckPermissions([PermissionAction.UPDATE, 'company_detail'])
+  @CheckPermissions([PermissionAction.READ, 'company_detail'])
   async getAllCompanies(@Query() paginationDto: CommonPaginationDto) {
     return this.companyDetailsService.getAllCompanies(paginationDto);
   }
