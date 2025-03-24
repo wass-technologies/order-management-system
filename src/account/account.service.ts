@@ -99,6 +99,8 @@ async userdetails(id: string) {
   }
   return result;
 }
+
+
 async staffdetails(id: string) {
   const result = await this.repo
     .createQueryBuilder('account')
