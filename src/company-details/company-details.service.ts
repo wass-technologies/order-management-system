@@ -94,15 +94,18 @@ export class CompanyDetailsService {
     const obj = Object.assign(result, dto);
     return this.repo.save(obj);
   }
+
+
+  async deleteCompanyDetails(id: string): Promise<{ message: string }> {
+    const result = await this.repo.findOne({ where: { accountId: id } });
+    if (!result) {
+      throw new NotFoundException('Company not found!');
+    }
+    await this.repo.remove(result);
+    return { message: 'Company deleted successfully!' };
+  }
   
-
-
-
-
-
-
-
-
+  
   
   // async updateCompanyDetails(accountId: string, updateData: Partial<CompanyDetail>) {
   //   let companyDetails = await this.repo.findOne({ where: { account: { id: accountId } } });

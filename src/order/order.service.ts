@@ -1,5 +1,4 @@
 import { Injectable,NotFoundException, ForbiddenException} from '@nestjs/common';
-
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import{InjectRepository} from '@nestjs/typeorm';
@@ -23,14 +22,12 @@ export class OrderService {
 
   ) {}
   
-// order place 
+ 
 async placeOrder(userId: string): Promise<Order> {
   console.log(userId);
-
-  // Fetch user using QueryBuilder with select()
   const user = await this.accountRepo
     .createQueryBuilder('user')
-    .select(['user.id', 'user.name']) // Selecting only necessary fields
+    .select(['user.id', 'user.name']) 
     .where('user.id = :userId', { userId })
     .getOne();
 
@@ -38,7 +35,6 @@ async placeOrder(userId: string): Promise<Order> {
     throw new NotFoundException('User not found');
   }
 
-  // Fetch cart items using QueryBuilder with select() and joins
   const cartItems = await this.cartRepo
     .createQueryBuilder('cart')
     .select([
@@ -167,8 +163,6 @@ async updateOrderStatus(orderId: number, newStatus: OrderStatus, accountId: stri
       }
   };
 }
-
-
 
 }
 

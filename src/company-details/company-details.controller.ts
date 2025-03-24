@@ -14,15 +14,15 @@ import {
   UseGuards,
   UseInterceptors,
   Req,
-  UnauthorizedException
+  UnauthorizedException,
+  Delete
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { Account } from 'src/account/entities/account.entity';
-;
+import { Account } from 'src/account/entities/account.entity';;
 import { CheckPermissions } from 'src/auth/decorators/permissions.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
@@ -41,12 +41,6 @@ import { CompanyDetail } from './entities/company-detail.entity';
 export class CompanyDetailsController {
   constructor(private readonly companyDetailsService: CompanyDetailsService) {}
 
-
-
-
-
-
-
   @Get('all')
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(UserRole.STAFF, UserRole.ADMIN)
@@ -56,8 +50,9 @@ export class CompanyDetailsController {
   }
 
   @Get(':companyId/menu')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard,PermissionsGuard)
+  @Roles(UserRole.STAFF, UserRole.ADMIN)
+  @CheckPermissions([PermissionAction.READ, 'company_detail'])
   async getMenuByCompanyIdforAdmin(
     @Param('companyId') companyId: string,
     @Query() paginationDto: CommonPaginationDto) {
@@ -66,6 +61,8 @@ export class CompanyDetailsController {
 
 
   @Put('update/:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.RESTAURANT)
   async updatecompanyDetails(
     @Param('id') id: string,
     @Body() updateDto: CompanyDetailDto ): Promise<CompanyDetail> {
@@ -82,6 +79,26 @@ export class CompanyDetailsController {
   status(@Param('id') id: string, @Body() dto: StatusDto) {
     return this.companyDetailsService.status(id, dto);
   }
+
+  @Delete('delete/:id')
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles(UserRole.RESTAURANT)
+async deleteCompanyDetails(@Param('id') id: string): Promise<{ message: string }> {
+  return this.companyDetailsService.deleteCompanyDetails(id);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   // @Get('profiles')
