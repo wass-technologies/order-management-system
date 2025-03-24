@@ -16,29 +16,7 @@ export class UserDetailsService {
   ) {}
 
 
-  // Import DTO
 
-  async updateusrDetails(accountId: string, updateData: UpdateUserDetailDto) {
-    let userDetail = await this.repo.findOne({
-      where: { account: { id: accountId } },
-      relations: ['account'], 
-    });
-  
-    if (!userDetail) {
-      const account = await this.accountrepo.findOne({ where: { id: accountId } });
-      if (!account) {
-        throw new NotFoundException('Account not found');
-      }
-  
-      userDetail = this.repo.create({ ...updateData, account }); 
-    } else {
-      Object.assign(userDetail, updateData); 
-    }
-  
-    return this.repo.save(userDetail); 
-  }
-
-  // all company details by admin 
   async getAllUserDetails(paginationDto: CommonPaginationDto) {
     const { limit, offset, keyword } = paginationDto;
   
@@ -61,9 +39,66 @@ export class UserDetailsService {
       pageSize: limit,
     };
   }
+
+
+  
+  async updateUserDetails(id: string, dto: UpdateUserDetailDto) {
+    const result = await this.repo.findOne({ where: { accountId: id } });
+    if (!result) {
+      throw new NotFoundException('Company not found!');
+    }
+    const obj = Object.assign(result, dto);
+    return this.repo.save(obj);
+  }
+
+ 
+
+ 
   
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
+   // async updateusrDetails(accountId: string, updateData: UpdateUserDetailDto) {
+  //   let userDetail = await this.repo.findOne({
+  //     where: { account: { id: accountId } },
+  //     relations: ['account'], 
+  //   });
+  
+  //   if (!userDetail) {
+  //     const account = await this.accountrepo.findOne({ where: { id: accountId } });
+  //     if (!account) {
+  //       throw new NotFoundException('Account not found');
+  //     }
+  
+  //     userDetail = this.repo.create({ ...updateData, account }); 
+  //   } else {
+  //     Object.assign(userDetail, updateData); 
+  //   }
+  
+  //   return this.repo.save(userDetail); 
+  // }
   
 
   async getProfile(id: string) {

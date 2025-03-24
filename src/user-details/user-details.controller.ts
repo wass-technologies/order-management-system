@@ -26,11 +26,11 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRole } from 'src/enum';
 import { PaginationSDto, UpdateUserDetailDto } from './dto/update-user-details';
 import { UserDetailsService } from './user-details.service';
-import{Request} from 'express';
 import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
 import { PermissionAction } from 'src/enum'; 
 import { CheckPermissions } from 'src/auth/decorators/permissions.decorator';
 import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
+import { UserDetail } from './entities/user-detail.entity';
 
 
 @Controller('user-details')
@@ -39,29 +39,55 @@ export class UserDetailsController {
 // user details update
   
  
-    @Put('update')
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Roles(UserRole.RESTAURANT)
-    async updateuserDetail(@CurrentUser() user: { accountId: string } , @Body() updateData: UpdateUserDetailDto) {
-  //  const user = req.user as { accountId: string };
-      if (!user || !user.accountId) {
-        throw new UnauthorizedException('Invalid token');
-      }
-      return this.userDetailsService.updateusrDetails(user.accountId, updateData);
-    }
+
+@Get('all')
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
+@Roles(UserRole.STAFF, UserRole.ADMIN)
+@CheckPermissions([PermissionAction.READ, 'user_detail'])
+async getAllUserDetails(
+ @Query() paginationDto:CommonPaginationDto 
+) {
+ 
+ return this.userDetailsService.getAllUserDetails(paginationDto);
+}
+
+
+
+@Put('update/:id')
+async updateUserDetails(
+  @Param('id') id: string,
+  @Body() updateDto:UpdateUserDetailDto ): Promise<UserDetail> {
+  return this.userDetailsService.updateUserDetails(id, updateDto);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //   @Put('update')
+  //   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  //   @Roles(UserRole.RESTAURANT)
+  //   async updateuserDetail(@CurrentUser() user: { accountId: string } , @Body() updateData: UpdateUserDetailDto) {
+  // //  const user = req.user as { accountId: string };
+  //     if (!user || !user.accountId) {
+  //       throw new UnauthorizedException('Invalid token');
+  //     }
+  //     return this.userDetailsService.updateusrDetails(user.accountId, updateData);
+  //   }
 
 
  
-      @Get('all')
-        @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
-        @Roles(UserRole.STAFF, UserRole.ADMIN)
-        @CheckPermissions([PermissionAction.READ, 'user-details'])
-      async getAllUserDetails(
-        @Query() paginationDto:CommonPaginationDto 
-      ) {
-        
-        return this.userDetailsService.getAllUserDetails(paginationDto);
-      }
 
 
 

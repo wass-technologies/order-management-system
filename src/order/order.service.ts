@@ -57,39 +57,39 @@ export class OrderService {
     await this.cartRepo.delete({ user: { id: userId } });
     return order;
   }
-
-
-  async getCompanytOrders(accountId: string, paginationDto: CommonPaginationDto) {
+///problem in this function
+  async getCompanyOrders(accountId: string, paginationDto: CommonPaginationDto) {
     const { limit, offset, keyword } = paginationDto;
 
     const account = await this.accountRepo.findOne({ where: { id: accountId } });
     const company = await this.companyRepo.findOne({
-      where: { account: { id: accountId } },
-      relations: ['account'],
+        where: { account: { id: accountId } },
+        relations: ['account'],
     });
 
     if (!company) {
-      throw new NotFoundException('No restaurant found for this owner.');
-    }    
-    const whereCondition: any = { company: { id: company.id } };
-    if (keyword) {
-        whereCondition['name'] = { $like: `%${keyword}%` }; 
+        throw new NotFoundException('No restaurant found for this owner.');
     }
 
-    const orders = await this.orderRepo.find({
-      where: whereCondition,
-      relations: ['company'],
-      take: limit, 
-      skip: offset, 
-    });
+    const queryBuilder = this.orderRepo.createQueryBuilder('order')
+        .leftJoinAndSelect('order.company', 'company')
+        .where('company.id = :companyId', { companyId: company.id });
 
-    const totalOrders = await this.orderRepo.count({ where: whereCondition });
+    if (keyword) {
+        queryBuilder.andWhere('order.name LIKE :keyword', { keyword: `%${keyword}%` });
+    }
+
+    const [orders, totalOrders] = await queryBuilder
+        .take(limit)
+        .skip(offset)
+        .getManyAndCount();
 
     return {
-      totalOrders, 
-      orders,      
+        totalOrders,
+        orders,
     };
 }
+
 
 // view order status for customer
 async getOrderStatus(orderId: number, userId: string) {

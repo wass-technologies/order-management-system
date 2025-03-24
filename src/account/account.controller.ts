@@ -39,8 +39,6 @@ export class AccountController {
     
   ) { }
 
-
-
   @Post('add-staff')
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(UserRole.ADMIN)
@@ -75,8 +73,8 @@ export class AccountController {
   }
 
   @Get('userdetails/:accountId')
-  // @UseGuards(AuthGuard('jwt'), RolesGuard)
-  // @Roles(UserRole.CUSTOMER) 
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.CUSTOMER) 
   async getUserDetails(@Param('accountId') accountId: string) {
      return this.accountService.userdetails(accountId);
     
@@ -84,8 +82,8 @@ export class AccountController {
 
 
   @Get('staffdetails/:accountId')
-  // @UseGuards(AuthGuard('jwt'), RolesGuard)
-  // @Roles(UserRole.CUSTOMER) 
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+   @Roles(UserRole.STAFF) 
   async getstaffDetails(@Param('accountId') accountId: string) {
      return this.accountService.staffdetails(accountId);
     

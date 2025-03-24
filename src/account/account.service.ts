@@ -80,51 +80,33 @@ async detail(id: string) {
 }
 
 async userdetails(id: string) {
-  // const akah =this.repo.findOne({
-  //   where: { id },
-  //   relations: ['userDetail'],
-  // });
-  // console.log(akah);
-  // const result = await this.repo
-  //   .createQueryBuilder('account')
-  //   .leftJoinAndSelect('account.userDetail', 'userDetail') 
-  //   .select([
-  //     'account.id',
-  //     'account.roles',
-  //     'account.status',
-  //     'userDetail.id',
-  //     'userDetail.name',
-  //     'userDetail.city',
-  //     'userDetail.interest',
-  //     'userDetail.wpNo',
-  //     'userDetail.profile',
-  //   ])
-  //   .where('account.id = :id', { id }) 
-  //   .getOne();
-  // const result=await this.repo.findOne({
-  //   where: { id },
-  //   relations: ['userDetail'],
-  //   .select
-    
-  // });
+  const result = await this.repo
+    .createQueryBuilder('account')
+    .leftJoinAndSelect('account.userDetail', 'userDetail')
+    .select([
+      'account.id',
+      'account.email',
+      'account.roles',
+      'account.status',
+     
 
-  // if (!result ) {
+      'userDetail.id',
+      'userDetail.name',
+      'userDetail.email',
+      'userDetail.city',
+      'userDetail.interest',
+      'userDetail.wpNo',
+      
+    ])
+    .where('account.id = :id', { id: id })
+    .getOne();
+  // if (!result) {
   //   throw new NotFoundException('Profile Not Found!');
   // }
-  // return result;
-  const result = await this.repo.findOne({
-    where: { id },
-    relations: ['userDetail'],
-    select: [
-      'id',
-      'roles',
-      'status',
-    ],
-  });
-
-
   return result;
 }
+
+
 
 async staffdetails(id: string) {
   const result = await this.repo
@@ -136,16 +118,14 @@ async staffdetails(id: string) {
       'account.id',
       'account.roles',
       'account.status',
-      'StaffDetail.id',
-      'StaffDetail.name',
-      'StaffDetail.address1',
-      // 'StaffDetail.address2',
-      // 'companyDetail.state',
-      // 'companyDetail.city',
-      // 'companyDetail.fbLink',
-      // 'companyDetail.wpLink',
-      // 'companyDetail.instaLink',
-      // 'companyDetail.status',
+      'staffDetail.id',
+      'staffDetail.name',
+      'staffDetail.address1',
+       'staffDetail.address2',
+      'staffDetail.state',
+      'staffDetail.city',
+      'staffDetail.pincode',
+     
     ])
     .getOne(); 
   if (!result) {
@@ -156,32 +136,7 @@ async staffdetails(id: string) {
 
 
 
-// async userdetails(id: string) {
-//   const result = await this.repo
-//     .createQueryBuilder('account')
-//     .leftJoinAndSelect('account.userDetail', 'userDetail')
-//     .select([
-//       'account.id',
-//       'account.email',
-//       'account.roles',
-//       'account.status',
-     
 
-//       'userDetail.id',
-//       'userDetail.name',
-//       'userDetail.email',
-//       'userDetail.city',
-//       'userDetail.interest',
-//       'userDetail.wpNo',
-      
-//     ])
-//     .where('account.id = :id', { id: id })
-//     .getOne();
-//   if (!result) {
-//     throw new NotFoundException('Profile Not Found!');
-//   }
-//   return result;
-// }
 
 
   async profile(id: string) {

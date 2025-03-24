@@ -10,8 +10,6 @@ import { StaffDetail } from './entities/staff_detail.entity';
 export class StaffDetailController {
   constructor(private readonly staffService: StaffDetailService) {}
 
- 
-
 
   @Put(':id')
   async updateStaff(

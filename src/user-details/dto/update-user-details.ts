@@ -11,17 +11,17 @@ import {
 } from 'class-validator';
 
 export class UpdateUserDetailDto {
-  @IsOptional()
-  @IsString()
-  @MinLength(0)
-  @MaxLength(50)
-  name: string;
+  // @IsOptional()
+  // @IsString()
+  // @MinLength(0)
+  // @MaxLength(50)
+  // name: string;
 
-  @IsOptional()
-  @IsString()
-  @MinLength(0)
-  @MaxLength(50)
-  email: string;
+  // @IsOptional()
+  // @IsString()
+  // @MinLength(0)
+  // @MaxLength(50)
+  // email: string;
 
   @IsOptional()
   city: string;
