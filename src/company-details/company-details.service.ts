@@ -2,12 +2,7 @@ import { Injectable, NotFoundException,UsePipes, ValidationPipe, BadRequestExcep
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyStatus } from 'src/enum';
 import { Brackets, Repository } from 'typeorm';
-import {
-  CompanyDetailDto,
-  // PaginationDto,
-  // PaginationSDto,
-  StatusDto,
-} from './dto/company-detail.dto';
+import { CompanyDetailDto,StatusDto,} from './dto/company-detail.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enum';
 import { CompanyDetail } from './entities/company-detail.entity';
@@ -27,32 +22,6 @@ export class CompanyDetailsService {
     private readonly accountrepo: Repository<Account>,
   ) {}
 
-
-  async updatecompanyDetails(id: string, dto: CompanyDetailDto) {
-        const result = await this.repo.findOne({ where: { accountId: id } });
-        if (!result) {
-          throw new NotFoundException('Company not found!');
-        }
-        const obj = Object.assign(result, dto);
-        return this.repo.save(obj);
-      }
-    
-
-  // async updateCompanyDetails(accountId: string, updateData: Partial<CompanyDetail>) {
-  //   let companyDetails = await this.repo.findOne({ where: { account: { id: accountId } } });
-  //   if (!companyDetails) {
-  //     const account = await this.accountrepo.findOne({ where: { id: accountId } });
-  //     if (!account) {
-  //       throw new Error('Account not found');
-  //     }
-  //     companyDetails = this.repo.create({ ...updateData, account });
-  //   } else {
-  //     Object.assign(companyDetails, updateData);
-  //   }
-  //   return this.repo.save(companyDetails);
-  // }
-
-  
   
 
   // Get all companies 
@@ -78,34 +47,6 @@ export class CompanyDetailsService {
       pageSize: limit,
     };
   }
-
-  // Get approved companies 
-  async getApprovedCompanies(paginationDto: CommonPaginationDto) {
-    const { limit = 10, offset = 0, keyword } = paginationDto;
-
-    const query = this.repo
-      .createQueryBuilder('company')
-      .where('company.status = :status', { status: CompanyStatus.APPROVED });
-
-    if (keyword) {
-      query.andWhere('company.name LIKE :keyword', { keyword: `%${keyword}%` });
-    }
-
-    const [approvedCompanies, total] = await query
-      .skip(offset)
-      .take(limit)
-      .getManyAndCount();
-
-    return {
-      total,
-      companies: approvedCompanies,
-      totalPages: Math.ceil(total / limit),
-      currentPage: Math.floor(offset / limit) + 1,
-      pageSize: limit,
-      
-    };
-  }
-
 
   
   // Get menu by company ID for admin 
@@ -133,6 +74,17 @@ export class CompanyDetailsService {
       
     };
   }
+
+
+  async updatecompanyDetails(id: string, dto: CompanyDetailDto) {
+    const result = await this.repo.findOne({ where: { accountId: id } });
+    if (!result) {
+      throw new NotFoundException('Company not found!');
+    }
+    const obj = Object.assign(result, dto);
+    return this.repo.save(obj);
+  }
+
  // staust update
   async status(id: string, dto: StatusDto) {
     const result = await this.repo.findOne({ where: { accountId: id } });
@@ -144,6 +96,27 @@ export class CompanyDetailsService {
   }
   
 
+
+
+
+
+
+
+
+  
+  // async updateCompanyDetails(accountId: string, updateData: Partial<CompanyDetail>) {
+  //   let companyDetails = await this.repo.findOne({ where: { account: { id: accountId } } });
+  //   if (!companyDetails) {
+  //     const account = await this.accountrepo.findOne({ where: { id: accountId } });
+  //     if (!account) {
+  //       throw new Error('Account not found');
+  //     }
+  //     companyDetails = this.repo.create({ ...updateData, account });
+  //   } else {
+  //     Object.assign(companyDetails, updateData);
+  //   }
+  //   return this.repo.save(companyDetails);
+  // }
 
   // async findList(dto: PaginationDto) {
   //   const category = JSON.parse(dto.category);
@@ -240,6 +213,33 @@ export class CompanyDetailsService {
   //   }
   //   company.status = status;
   //   return this.repo.save(company);
+  // }
+
+    // // Get approved companies 
+  // async getApprovedCompanies(paginationDto: CommonPaginationDto) {
+  //   const { limit = 10, offset = 0, keyword } = paginationDto;
+
+  //   const query = this.repo
+  //     .createQueryBuilder('company')
+  //     .where('company.status = :status', { status: CompanyStatus.APPROVED });
+
+  //   if (keyword) {
+  //     query.andWhere('company.name LIKE :keyword', { keyword: `%${keyword}%` });
+  //   }
+
+  //   const [approvedCompanies, total] = await query
+  //     .skip(offset)
+  //     .take(limit)
+  //     .getManyAndCount();
+
+  //   return {
+  //     total,
+  //     companies: approvedCompanies,
+  //     totalPages: Math.ceil(total / limit),
+  //     currentPage: Math.floor(offset / limit) + 1,
+  //     pageSize: limit,
+      
+  //   };
   // }
  
 }

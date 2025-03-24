@@ -9,8 +9,6 @@ import bcrypt from 'bcrypt';
 import { CreateAccountDto } from 'src/account/dto/account.dto';
 import { StaffDetail } from 'src/staff_detail/entities/staff_detail.entity';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-
-
 @Injectable()
 export class AccountService {
   constructor(
@@ -49,7 +47,6 @@ export class AccountService {
 
   
 async detail(id: string) {
- 
   const result = await this.repo
     .createQueryBuilder('account')
     .leftJoinAndSelect('account.companyDetail', 'companyDetail')
@@ -88,26 +85,20 @@ async userdetails(id: string) {
       'account.email',
       'account.roles',
       'account.status',
-     
-
-      'userDetail.id',
-      'userDetail.name',
+      'UserDetail.id',
+      'UserDetail.name',
       'userDetail.email',
       'userDetail.city',
       'userDetail.interest',
       'userDetail.wpNo',
-      
     ])
     .where('account.id = :id', { id: id })
     .getOne();
-  // if (!result) {
-  //   throw new NotFoundException('Profile Not Found!');
-  // }
+  if (!result) {
+    throw new NotFoundException('Account or user  details not found');
+  }
   return result;
 }
-
-
-
 async staffdetails(id: string) {
   const result = await this.repo
     .createQueryBuilder('account')
@@ -133,6 +124,8 @@ async staffdetails(id: string) {
   }
   return result;
 }
+
+
 
 
 

@@ -79,6 +79,7 @@ export class CartService {
     }
 
     return {
+      id: cartItem.id,
       quantity: cartItem.quantity,
       totalPrice: cartItem.totalPrice,
       company: { id: menuItem.company.id, name: menuItem.company.name },

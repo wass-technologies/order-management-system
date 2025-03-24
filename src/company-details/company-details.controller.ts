@@ -43,26 +43,9 @@ export class CompanyDetailsController {
 
 
 
-   @Put('update/:id')
-    async updatecompanyDetails(
-      @Param('id') id: string,
-      @Body() updateDto: CompanyDetailDto ): Promise<CompanyDetail> {
-      return this.companyDetailsService.updatecompanyDetails(id, updateDto);
-    }
-  
 
-  // @Put('update')
-  // @UseGuards(AuthGuard('jwt'), RolesGuard)
-  // @Roles(UserRole.RESTAURANT)
-  // async updateCompanyDetail(
-  //   @CurrentUser() user: { accountId: string },
-  //   @Body() updateData
-  // ) {
-  //   if (!user?.accountId) {
-  //     throw new UnauthorizedException('Invalid token');
-  //   }
-  //   return this.companyDetailsService.updateCompanyDetails(user.accountId, updateData);
-  // }
+
+
 
   @Get('all')
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
@@ -81,8 +64,16 @@ export class CompanyDetailsController {
     return this.companyDetailsService.getMenuByCompanyIdforAdmin(companyId, paginationDto);
   }
 
+
+  @Put('update/:id')
+  async updatecompanyDetails(
+    @Param('id') id: string,
+    @Body() updateDto: CompanyDetailDto ): Promise<CompanyDetail> {
+    return this.companyDetailsService.updatecompanyDetails(id, updateDto);
+  }
+
  
-  @Put(':id')
+  @Put('status/:id')
   @ApiOperation({ summary: 'For Admin' })
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(UserRole.STAFF, UserRole.ADMIN)
@@ -98,6 +89,22 @@ export class CompanyDetailsController {
   //   return this.companyDetailsService.getApprovedCompanies(paginationDto);
   // }
 
+
+
+
+
+    // @Put('update')
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Roles(UserRole.RESTAURANT)
+  // async updateCompanyDetail(
+  //   @CurrentUser() user: { accountId: string },
+  //   @Body() updateData
+  // ) {
+  //   if (!user?.accountId) {
+  //     throw new UnauthorizedException('Invalid token');
+  //   }
+  //   return this.companyDetailsService.updateCompanyDetails(user.accountId, updateData);
+  // }
 
 
   // @Put('profile')

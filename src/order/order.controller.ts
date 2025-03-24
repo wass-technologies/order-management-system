@@ -32,9 +32,9 @@ async placeOrder(@CurrentUser() user: { accountId: string }) {
 }
 
 // company check order
-@Get('')
-// @UseGuards(AuthGuard('jwt'), RolesGuard)
-// @Roles('RESTAURANT') 
+@Get()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles('RESTAURANT') 
 async getCompanytOrders(@CurrentUser() user: { accountId: string }, @Query() paginationDto: CommonPaginationDto) {
     return this.orderService.getCompanyOrders(user.accountId, paginationDto);
 }
