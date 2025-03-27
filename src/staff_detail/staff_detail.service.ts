@@ -18,7 +18,6 @@ export class StaffDetailService {
     if (!staff) {
       throw new NotFoundException(`Staff with ID ${id} not found`);
     }
-
     Object.assign(staff, updateDto);
     return this.repo.save(staff);
   }
