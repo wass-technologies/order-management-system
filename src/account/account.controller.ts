@@ -61,81 +61,44 @@ export class AccountController {
     return account;
   }
 
+
+  @Get('all')
+  @Roles(UserRole.ADMIN,)
+  async getAllAccounts(@Body() dto: PaginationDto) {
+    return this.accountService.findAllAccounts(dto);
+  }
+ 
+  @Get('RESTAURANT')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.RESTAURANT)
+  profile(@CurrentUser() user: Account){
+    return this.accountService.detail(user.id);
+  }
+
   
-  // get company details by account id
-  @Get('compnay_detail/:accountId')
+  @Get('Customer-details')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.RESTAURANT) 
-  async getAccountDetail(@Param('accountId') accountId: string) {
-    return this.accountService.detail(accountId);
-
-    
+  @Roles(UserRole.CUSTOMER)
+  getCustomerAccount(@CurrentUser() user: Account){
+    return this.accountService.userdetails(user.id);
+  }
+  @Get('Staff-details')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.STAFF)
+  getStaffacoount(@CurrentUser() user: Account){
+    return this.accountService.staffdetails(user.id);
   }
 
-  @Get('userdetails/:accountId')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.CUSTOMER) 
-  async getUserDetails(@Param('accountId') accountId: string) {
-     return this.accountService.userdetails(accountId);
-    
   }
 
 
-  @Get('staffdetails/:accountId')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-   @Roles(UserRole.STAFF) 
-  async getstaffDetails(@Param('accountId') accountId: string) {
-     return this.accountService.staffdetails(accountId);
-    
-  }
 
-//   @Get('vendor')
-//   @UseGuards(AuthGuard('jwt'), RolesGuard)
-//   @Roles(UserRole.RESTAURANT)
-//   profile(@CurrentUser() user: Account){
-//     return this.accountService.profile(user.id);
-//   }
+
+  
   
 
  
-//   @Get('resataurantDetails/:accountId')
-//   @UseGuards(AuthGuard('jwt'), RolesGuard)
-//   @Roles(UserRole.ADMIN)
-//  // @CheckPermissions([PermissionAction.READ, 'account'])
-//   vendorDetailByAdmin(@Param('accountId') accountId: string){
-//     return this.accountService.details(accountId);
-//   }
 
-//   @Get('vendorDetail/user/:accountId')
-//   vendorDetailByUser(@Param('accountId') accountId: string){
-//     return this.accountService.detailByUser(accountId);
-//   }
 
-//   @Get('vendors')
-//   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
-//   @Roles(UserRole.ADMIN)
-//   @CheckPermissions([PermissionAction.READ, 'account'])
-//   findAll(@Query() query: PaginationDto) {
-//     return this.accountService.findAll(query);
-//   }
-  
-//   @Get('resataurant/list')
-//   @UseGuards(AuthGuard('jwt'), RolesGuard)
-//   @Roles(UserRole.CUSTOMER)
-//   findAllByUser(@Query() dto: BusinessPaginationDto, @CurrentUser() user: Account) {
-//     if (dto.keyword && dto.keyword.length > 0) {
-//       this.searchHistoryService.create({
-//         keyword: dto.keyword,
-//         accountId: user.id
-//       });
-//     }
-//     return this.accountService.findAllByUser(dto);
-//   }
 
-  // @Get('user/profile')
-  // @UseGuards(AuthGuard('jwt'), RolesGuard)
-  // @Roles(UserRole.CUSTOMER)
-  // userProfile(@CurrentUser() user: Account){
-  //   return this.accountService.userProfile(user.id);
-  // }
-}
+

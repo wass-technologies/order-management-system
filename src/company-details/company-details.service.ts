@@ -24,7 +24,7 @@ export class CompanyDetailsService {
 
   
 
-  // Get all companies 
+
   async getAllCompanies(paginationDto: CommonPaginationDto) {
     const { limit = 10, offset = 0, keyword } = paginationDto;
 
@@ -49,7 +49,6 @@ export class CompanyDetailsService {
   }
 
   
-  // Get menu by company ID for admin 
   async getMenuByCompanyIdforAdmin(companyId: string, paginationDto: CommonPaginationDto) {
     const { limit = 10, offset = 0 } = paginationDto;
 
